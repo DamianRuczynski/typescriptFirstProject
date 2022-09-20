@@ -1,0 +1,23 @@
+{
+  "name": "firstproject",
+  "version": "1.0.0",
+  "description": "my firs project using typescript!",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "lite-server"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DamianRuczynski/typescriptFirstProject.git"
+  },
+  "author": "damiaaan (_haide_)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DamianRuczynski/typescriptFirstProject/issues"
+  },
+  "homepage": "https://github.com/DamianRuczynski/typescriptFirstProject#readme",
+  "devDependencies": {
+    "lite-server": "^2.6.1"
+  }
+}
