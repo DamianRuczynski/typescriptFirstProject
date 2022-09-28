@@ -36,6 +36,21 @@ function autobind(target, methodName, descriptor) {
     };
     return adjDescriptor;
 }
+class Component {
+    constructor(templateId, hostElementId, insertAtStart, newElementId) {
+        this.templateElement = document.getElementById(templateId);
+        this.hostElement = document.getElementById(hostElementId);
+        const importedNode = document.importNode(this.templateElement.content, true);
+        this.element = importedNode.firstElementChild;
+        if (newElementId) {
+            this.element.id = newElementId;
+        }
+        this.attach(insertAtStart);
+    }
+    attach(insertAtBeginning) {
+        this.hostElement.insertAdjacentElement(insertAtBeginning ? 'afterbegin' : 'beforeend', this.element);
+    }
+}
 //PROJECT LIST CLASS
 class ProjectList {
     constructor(type) {
@@ -67,22 +82,19 @@ class ProjectList {
     }
 }
 //PROJECT INPUT CLASS
-class ProjectInput {
+class ProjectInput extends Component {
     constructor() {
+        super('project-input', 'app', true, 'user-input');
         this.templateElement = document.getElementById('project-input');
-        this.hostElement = document.getElementById('app');
-        const importedNode = document.importNode(this.templateElement.content, true);
-        this.formToAttach = importedNode.firstElementChild;
-        this.formToAttach.id = 'user-input';
-        this.titleInputElement = this.formToAttach.querySelector('#title');
-        this.descInputElement = this.formToAttach.querySelector('#description');
-        this.peopleInputElement = this.formToAttach.querySelector('#people');
-        this.projectInputBtn = this.formToAttach.querySelector('form button');
+        this.titleInputElement = this.element.querySelector('#title');
+        this.descInputElement = this.element.querySelector('#description');
+        this.peopleInputElement = this.element.querySelector('#people');
+        this.projectInputBtn = this.element.querySelector('form button');
         this.attachContent();
         this.configure();
     }
     attachContent() {
-        this.hostElement.insertAdjacentElement('afterbegin', this.formToAttach);
+        this.hostElement.insertAdjacentElement('afterbegin', this.element);
     }
     configure() {
         this.projectInputBtn.addEventListener('click', this.submitHandler);

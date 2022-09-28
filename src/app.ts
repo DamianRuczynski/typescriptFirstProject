@@ -48,6 +48,41 @@ function autobind(
     return adjDescriptor;
 }
 
+abstract class Component<T extends HTMLElement, U extends HTMLElement>{
+    templateElement: HTMLTemplateElement;
+    hostElement: T;
+    element: U;
+
+    constructor(
+        templateId: string,
+        hostElementId: string,
+        insertAtStart: boolean,
+        newElementId: string
+    ) {
+        this.templateElement = document.getElementById(templateId)! as HTMLTemplateElement;
+        this.hostElement = document.getElementById(hostElementId)! as T;
+
+        const importedNode = document.importNode(
+            this.templateElement.content,
+            true
+        );
+        this.element = importedNode.firstElementChild as U;
+        if (newElementId) {
+            this.element.id = newElementId;
+        }
+
+        this.attach(insertAtStart);
+    }
+
+    private attach(insertAtBeginning: boolean) {
+        this.hostElement.insertAdjacentElement(
+            insertAtBeginning ? 'afterbegin' : 'beforeend',
+            this.element
+        )
+    }
+
+}
+
 //PROJECT LIST CLASS
 
 class ProjectList {
@@ -92,34 +127,27 @@ class ProjectList {
 
 
 //PROJECT INPUT CLASS
-class ProjectInput {
-    templateElement: HTMLTemplateElement
-    hostElement: HTMLDivElement
-    formToAttach: HTMLFormElement
+class ProjectInput extends Component<HTMLTemplateElement, HTMLFormElement>{
     titleInputElement: HTMLInputElement
     descInputElement: HTMLTextAreaElement
     peopleInputElement: HTMLInputElement
     projectInputBtn: HTMLButtonElement
 
     constructor() {
-        this.templateElement = <HTMLTemplateElement>document.getElementById('project-input')!
-        this.hostElement = <HTMLDivElement>document.getElementById('app')!
+        super('project-input', 'app', true, 'user-input');
+        this.templateElement = <HTMLTemplateElement>document.getElementById('project-input')!;
 
-        const importedNode = document.importNode(this.templateElement.content, true)
-        this.formToAttach = <HTMLFormElement>importedNode.firstElementChild
-        this.formToAttach.id = 'user-input'
-
-        this.titleInputElement = <HTMLInputElement>this.formToAttach.querySelector('#title')
-        this.descInputElement = <HTMLTextAreaElement>this.formToAttach.querySelector('#description')
-        this.peopleInputElement = <HTMLInputElement>this.formToAttach.querySelector('#people')
-        this.projectInputBtn = <HTMLButtonElement>this.formToAttach.querySelector('form button')
+        this.titleInputElement = <HTMLInputElement>this.element.querySelector('#title')
+        this.descInputElement = <HTMLTextAreaElement>this.element.querySelector('#description')
+        this.peopleInputElement = <HTMLInputElement>this.element.querySelector('#people')
+        this.projectInputBtn = <HTMLButtonElement>this.element.querySelector('form button')
 
         this.attachContent()
         this.configure()
     }
 
     private attachContent() {
-        this.hostElement.insertAdjacentElement('afterbegin', this.formToAttach)
+        this.hostElement.insertAdjacentElement('afterbegin', this.element)
     }
 
     private configure() {
